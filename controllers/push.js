@@ -21,12 +21,8 @@ exports.bake = function(req,res,next){
             return repository.fetch(remoteName);
         })
         .then(function () {
-            console.log('Fetched!');
-            return repository.mergeBranches(branch, remoteBranch);
-        })
-        .then(function (oid) {
-          console.log('Merged!');
-          console.log(oid);
+          console.log('Fetched!');
+
           console.log("Pulling Done!");
           var path = req.file.path;
           console.log("Copying from: "+path);
