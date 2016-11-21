@@ -43,8 +43,8 @@ exports.bake = function(req,res,next){
             var ref = "refs/heads/master";
             console.log('Pushing!');
             remoteResult = repository.getRemote(remoteName);
-            remote = remoteResult.connect(git.Enums.DIRECTION.PUSH);
-            remote.push(["refs/heads/master:refs/heads/master"]);
+            remoteResult.connect(git.Enums.DIRECTION.PUSH);
+            remoteResult.push(["refs/heads/master:refs/heads/master"]);
             console.log("It worked!");
             return res.status(200).send({"success":true, "details": "It worked!"});
           });
