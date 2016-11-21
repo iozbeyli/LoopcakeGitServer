@@ -43,9 +43,7 @@ exports.bake = function(req,res,next){
         })
         .then(function (_remoteResult) {
           remoteResult = _remoteResult;
-          return repository.getBranch(branch);
-        })
-        .then(function (ref) {
+          var ref = "refs/heads/master";
           console.log('Pushing!');
           return remoteResult.push([ref.toString()], new Git.PushOptions());
         })
