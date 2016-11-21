@@ -3,8 +3,8 @@ var path = require("path");
 
 exports.create = function(req,res,next){
   var isBare = 0;
-  var user = req.user;
-  var repo = req.repo;
+  var user = req.body.user;
+  var repo = req.body.repo;
   var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
   git.Repository.init(usrEnv, isBare).then(function(repo){
     console.log("success: true, details: something happened.");
