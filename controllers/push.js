@@ -2,6 +2,7 @@ const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
 var ncp = require("ncp").ncp;
+const fs = require('fs');
 
 exports.bake = function(req,res,next){
 
@@ -38,19 +39,16 @@ exports.bake = function(req,res,next){
             var read_stream =  fs.createReadStream(path);
             fs.unlink(path);
             console.log('Copied!');
+
+            var ref = "refs/heads/master";
+            console.log('Pushing!');
+            remoteResult = repository.getRemote(remoteName);
+            remoteResult.push(["refs/heads/master:refs/heads/master"]);
+            console.log("It worked!");
+            return res.status(200).send({"success":true, "details": "It worked!"});
           });
-          return repository.getRemote(remoteName);
         })
-        .then(function (_remoteResult) {
-          remoteResult = _remoteResult;
-          var ref = "refs/heads/master";
-          console.log('Pushing!');
-          return remoteResult.push(["refs/heads/master:refs/heads/master"]);
-        })
-        .then(function() {
-          console.log("It worked!");
-          return res.status(200).send({"success":true, "details": "It worked!"});
-        });
+
 
 
 };
