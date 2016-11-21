@@ -47,7 +47,7 @@ exports.bake = function(req,res,next){
           console.log('Pushing!');
           return remoteResult.push([ref.toString()], new git.PushOptions());
         })
-        .done(function() {
+        .then(function() {
           console.log("It worked!");
           return res.status(200).send({"success":true, "details": "It worked!"});
         });
