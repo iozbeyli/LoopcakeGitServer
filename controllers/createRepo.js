@@ -12,14 +12,14 @@ exports.create = function(req,res,next){
     cred = nodegit.Cred;
 
 
-    Clone.clone(remote, usrEnv)
-    .then(function(err){
+    clone.clone(remote, usrEnv,function(err){
       if(err){
         return console.log(err);
       }
       console.log("success: true, details: something happened.");
       return res.status(200).send({"success":true, "details": "something happened."});
-    });
+    })
+
 
   });
 
