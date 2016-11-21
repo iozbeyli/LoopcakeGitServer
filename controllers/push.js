@@ -1,90 +1,62 @@
-
+const git = require("nodegit");
+var path = require("path");
+var open = git.Repository.open;
+var ncp = require("ncp").ncp;
 
 exports.bake = function(req,res,next){
 
   console.log("Push request recieved.");
-  console.log(req.file.filename);
-  /*if(!req.user._id){
-    console.log("success: false, details: Autherization failed.");
-    return res.status(401).send({"success":false, "detail": "Autherization failed!"});
-  }*/
-  var operation = req.body.operation;
+  var user = req.body.user;
+  var repo = req.body.repo;
+  var remoteName = 'origin';
+  var branch = 'master';
+  var repository;
+  var remoteBranch = remoteName + '/' + branch;
+  var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
+  console.log("Pulling remote.");
+  open(usrEnv)
+        .then(function (_repository) {
+            console.log('Repo Opened!');
+            repository = _repository;
+            return repository.fetch(remoteName);
+        })
+        .then(function () {
+            console.log('Fetched!');
+            return repository.mergeBranches(branch, remoteBranch);
+        })
+        .then(function (oid) {
+          console.log('Merged!');
+          console.log(oid);
+          console.log("Pulling Done!");
+          var path = req.file.path;
+          console.log("Copying from: "+path);
+          console.log("To: "+usrEnv);
+          console.log(req.file.filename);
 
-  if(!operation){
-    console.log("success: false, details: operation was not set!");
-    return res.status(200).send({"success":false, "detail": "operation was not set!"});
-  }
+          ncp.limit = 16;
 
-  if(operation != 1){
-    console.log("success: false, details: operation was not set!");
-    return res.status(200).send({"success":false, "detail": "operation was not set!"});
-  }
-
-  switch(operation) {
-    case '1':
-      var filename = req.file.filename;
-      var path = req.file.path;
-      var type = req.file.mimetype;
-      var ownermail = req.body.mail;
-
-      var oldimg;
-      var ownerid;
-      console.log("operation 1 started"+ ownermail);
-
-      User.findOne({"email": ownermail}, {_id: 1, photo: 1}, function (err, docs) {
-        if(err){
-          console.log("Internal db error");
-          console.log(err);
-          return res.status(500).send({"success":false, "details": "Internal DB error. Check query!", "error": err});
-        }
-        console.log("docs: "+docs);
-        ownerid = docs._id;
-        oldimg = docs.photo;
-        console.log("oldimg id: "+ oldimg);
-
-        var read_stream =  fs.createReadStream(path);
-        var writeStream = gfs.createWriteStream({
-          filename: filename,
-          ownerid: ownerid
-        });
-
-        read_stream.pipe(writeStream);
-
-        writeStream.on('close', function(file) {
-          newimg = file._id;
-          console.log("newimg id: "+ newimg);
-          writeStream.end();
-
-          if(oldimg){
-            console.log("triying to remove "+oldimg);
-            gfs.remove({_id: oldimg}, function(err){
-              if(err) return console.log(err)
-              console.log("ownerid "+ownerid);
-              User.update({_id: ownerid}, {$set: {photo: newimg}}, function(err){
-                fs.unlink(path);
-                return res.status(200).send({"success":true, "detail": "Profile Photo is changed!"});
-              });
-            });
-          }else{
-          console.log("ownerid "+ownerid);
-          User.update({_id: ownerid}, {$set: {photo: newimg}}, function(err){
-            if(err) return console.log(err)
+          ncp(path, usrEnv, function (err) {
+            if (err) {
+              return console.error(err);
+            }
+            var read_stream =  fs.createReadStream(path);
             fs.unlink(path);
-            return res.status(200).send({"success":true, "detail": "Profile Photo is changed!"});
+            console.log('Copied!');
           });
-        }
-
+          return repository.getRemote(remoteName);
+        })
+        .then(function (_remoteResult) {
+          remoteResult = _remoteResult;
+          return repository.getBranch(branch);
+        })
+        .then(function (ref) {
+          console.log('Pushing!');
+          return remoteResult.push([ref.toString()], new Git.PushOptions());
+        })
+        .done(function() {
+          console.log("It worked!");
+          return res.status(200).send({"success":true, "details": "It worked!"});
         });
 
-
-      });
-
-
-      break;
-    default:
-      console.log("success: false, details: Unknown Operation!");
-      return res.status(200).send({"success":false, "detail": "Unknown Operation!"});
-      break;
-  }
 
 };
