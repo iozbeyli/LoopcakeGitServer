@@ -1,6 +1,5 @@
 const git = require("nodegit");
 var path = require("path");
-var clone = git.Clone,
 
 exports.create = function(req,res,next){
   var isBare = 0;
