@@ -45,7 +45,7 @@ exports.bake = function(req,res,next){
           remoteResult = _remoteResult;
           var ref = "refs/heads/master";
           console.log('Pushing!');
-          return remoteResult.push("master", new git.PushOptions());
+          return remoteResult.push(["refs/heads/master:refs/heads/master"]);
         })
         .then(function() {
           console.log("It worked!");
