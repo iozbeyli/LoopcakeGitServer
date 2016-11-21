@@ -2,6 +2,7 @@ const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
 var ncp = require("ncp").ncp;
+const fs = require('fs');
 
 exports.bake = function(req,res,next){
 
