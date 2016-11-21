@@ -2,7 +2,6 @@ const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
 var ncp = require("ncp").ncp;
-const fs = require('fs');
 
 exports.bake = function(req,res,next){
 
@@ -43,7 +42,8 @@ exports.bake = function(req,res,next){
             var ref = "refs/heads/master";
             console.log('Pushing!');
             remoteResult = repository.getRemote(remoteName);
-            remoteResult.push(["refs/heads/master:refs/heads/master"]);
+            remote = remoteResult.connect(git.Enums.DIRECTION.PUSH);
+            remote.push(["refs/heads/master:refs/heads/master"]);
             console.log("It worked!");
             return res.status(200).send({"success":true, "details": "It worked!"});
           });
