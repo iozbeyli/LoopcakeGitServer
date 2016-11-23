@@ -43,7 +43,7 @@ exports.bake = function(req,res,next){
 
     ncp.limit = 16;
 
-    ncp(path, usrEnv, function (err) {
+    fse.copy(path, usrEnv, function (err) {
       if (err) {
         return console.error(err);
       }
@@ -94,7 +94,7 @@ exports.bake = function(req,res,next){
           console.log("It worked!");
           return res.status(200).send({"success":true, "details": "It worked!"});
         });*/
-  });
+      });
 
           });
 
