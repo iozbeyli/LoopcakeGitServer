@@ -83,7 +83,7 @@ exports.bake = function(req,res,next){
 
       }).then(function(commitId) {
           console.log("New Commit: ", commitId);
-          return repo.getRemote("origin");
+          return repository.getRemote("origin");
       }).then(function(remoteResult) {
         console.log('remote Loaded');
         remote = remoteResult;
