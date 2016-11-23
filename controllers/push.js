@@ -45,7 +45,7 @@ exports.bake = function(req,res,next){
 
     fse.copy(path, usrEnv+"/"+filename, function (err) {
       if (err) {
-        return console.error(err);
+        return console.error("error: "+err);
       }
       console.log('Copied!');
 
