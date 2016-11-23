@@ -60,7 +60,7 @@ exports.create = function(req,res,next){
 
         git.Clone(usrEnv, remote, {bare:1})
         .then(function(repo) {
-          git.Remote.create(repository, "origin", remote+".git");
+          git.Remote.create(repository, "origin", "git@localhost:"+remote+".git");
           console.log("success: true, details: something happened.");
           return res.status(200).send({"success":true, "details": "something happened."});
         });
