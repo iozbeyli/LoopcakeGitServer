@@ -1,7 +1,7 @@
 const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
-//var ncp = require("ncp").ncp;
+var ncp = require("ncp");
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
 
@@ -46,7 +46,7 @@ exports.bake = function(req,res,next){
 
     //ncp.limit = 16;
 
-    fse.copy(path, to, function (err) {
+    ncp(path, to, function (err) {
       if (err) {
         return console.error("error: "+err);
       }
