@@ -52,10 +52,10 @@ exports.bake = function(req,res,next){
       }
       console.log('Copied!');
 
-      /*var ref = "refs/heads/master";
+      var ref = "refs/heads/master";
       console.log('Pushing!');
 
-      repository.openIndex().then(function(indexResult){
+      repository.refreshIndex().then(function(indexResult){
         console.log('index result: '+ indexResult);
         index = indexResult;
       }).then(function(){
@@ -96,7 +96,7 @@ exports.bake = function(req,res,next){
           console.log('remote Pushed!')
           console.log("It worked!");
           return res.status(200).send({"success":true, "details": "It worked!"});
-        });*/
+        });
       });
 
           });
