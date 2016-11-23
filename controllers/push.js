@@ -21,12 +21,14 @@ exports.bake = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-
+      console.log("fetching");
       return repository.fetch(remoteName);
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function() {
+    console.log("fetched");
+    console.log("merging");
     return repository.mergeBranches(branch, remoteBranch);
   })
   .done(function() {
