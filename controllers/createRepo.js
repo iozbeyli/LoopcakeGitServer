@@ -58,7 +58,7 @@ exports.create = function(req,res,next){
     .done(function(commitId) {
       console.log("New Commit: ", commitId);
 
-        git.Clone(usrEnv, remote, {bare:1})
+        git.Clone(usrEnv, remote+".git", {bare:1})
         .then(function(repo) {
           git.Remote.create(repository, "origin", "git@localhost:"+remote+".git");
           console.log("success: true, details: something happened.");
