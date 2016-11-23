@@ -85,9 +85,9 @@ exports.bake = function(req,res,next){
           console.log("New Commit: ", commitId);
           return repository.getRemote("origin");
       }).then(function(remoteResult) {
-        console.log('remote Loaded '+  remoteResult);
+        console.log('remote Loaded '+ JSON.stringify(remoteResult));
         remote = remoteResult;
-      /*  return remote.connect(git.Enums.DIRECTION.PUSH);
+        /*return remote.connect(git.Enums.DIRECTION.PUSH);
       }).then(function() {
 
         console.log('remote Connected?', remote.connected())*/
