@@ -25,7 +25,7 @@ exports.create = function(req,res,next){
     if(err)
       console.log(err)
 
-    git.Repository.init(remote, 0)
+    git.Repository.init(remote, 1)
     .then(function(repo) {
       repository = repo;
       return fse.writeFile(path.join(repository.workdir(), fileName), fileContent);
