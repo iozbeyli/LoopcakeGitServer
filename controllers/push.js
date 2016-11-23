@@ -52,43 +52,8 @@ exports.bake = function(req,res,next){
 
         var ref = "refs/heads/master";
         console.log('Pushing!');
-        repository.refreshIndex()
-        .then(function(indexResult){
-          index = indexResult;
-        }).then(function(){
-          return index.addByPath(filename);
-        }).then(function(){
-          return index.write();
-        }).then(function(){
-          return index.writeTree();
-        }).then(function(oidResult){
-          oid = oidResult;
-          return git.Reference.nameToId(repository, "HEAD");
-        }).then(function(head){
-          return repository.getCommit(head);
-        }).then(function(parent){
-          var author = git.Signature.now("Scott Chacon",
-            "schacon@gmail.com");
-          var committer = git.Signature.now("Scott A Chacon",
-            "scott@github.com");
-          return repository.createCommit("HEAD", author, committer, "message", oid, [parent]);
+       return repository.refreshIndex();
 
-        }).then(function(commitId) {
-            console.log("New Commit: ", commitId);
-            return repo.getRemote("origin");
-        }).then(function(remoteResult) {
-          console.log('remote Loaded');
-          remote = remoteResult;
-          return remote.connect(nodegit.Enums.DIRECTION.PUSH);
-        }).then(function() {
-          console.log('remote Connected?', remote.connected())
-          return remote.push(
-            ["refs/heads/master:refs/heads/master"])
-          }).then(function() {
-            console.log('remote Pushed!')
-            console.log("It worked!");
-            return res.status(200).send({"success":true, "details": "It worked!"});
-          })
 
 
 
@@ -103,7 +68,48 @@ exports.bake = function(req,res,next){
           return res.status(200).send({"success":true, "details": "It worked!"});
 
         });*/
-      });
+      }).then(function(indexResult){
+        console.log('index result: '+ indexResult);
+        index = indexResult;
+      }).then(function(){
+        return index.addByPath(filename);
+      }).then(function(){
+        console.log('add by path');
+        return index.write();
+      }).then(function(){
+        console.log('write done');
+        return index.writeTree();
+      }).then(function(oidResult){
+        oid = oidResult;
+        console.log('write tree done oid: '+ oid);
+        return git.Reference.nameToId(repository, "HEAD");
+      }).then(function(head){
+        console.log('head result: '+ head);
+        return repository.getCommit(head);
+      }).then(function(parent){
+        console.log('parent result: '+ parent);
+        var author = git.Signature.now("Scott Chacon",
+          "schacon@gmail.com");
+        var committer = git.Signature.now("Scott A Chacon",
+          "scott@github.com");
+        return repository.createCommit("HEAD", author, committer, "message", oid, [parent]);
+
+      }).then(function(commitId) {
+          console.log("New Commit: ", commitId);
+          return repo.getRemote("origin");
+      }).then(function(remoteResult) {
+        console.log('remote Loaded');
+        remote = remoteResult;
+        return remote.connect(nodegit.Enums.DIRECTION.PUSH);
+      }).then(function() {
+        console.log('remote Connected?', remote.connected())
+        return remote.push(
+          ["refs/heads/master:refs/heads/master"])
+        }).then(function() {
+          console.log('remote Pushed!')
+          console.log("It worked!");
+          return res.status(200).send({"success":true, "details": "It worked!"});
+        })
   });
 
           });
