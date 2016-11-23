@@ -57,12 +57,11 @@ exports.create = function(req,res,next){
     })
     .done(function(commitId) {
       console.log("New Commit: ", commitId);
-      fse.remove(usrEnv).then(function () {
+
         git.Clone(usrEnv, remote, {bare:1})
         .then(function(repo) {
           console.log("success: true, details: something happened.");
           return res.status(200).send({"success":true, "details": "something happened."});
-          });
         });
     });
   });
