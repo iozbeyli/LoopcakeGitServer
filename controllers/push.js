@@ -52,7 +52,7 @@ exports.bake = function(req,res,next){
       var ref = "refs/heads/master";
       console.log('Pushing!');
 
-      repository.refreshIndex().then(function(indexResult){
+      repository.openIndex().then(function(indexResult){
         console.log('index result: '+ indexResult);
         index = indexResult;
       }).then(function(){
