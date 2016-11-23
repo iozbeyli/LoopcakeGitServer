@@ -43,7 +43,7 @@ exports.bake = function(req,res,next){
 
     ncp.limit = 16;
 
-    fse.copy(path, usrEnv, function (err) {
+    fse.copy(path, usrEnv+"/"+filename, function (err) {
       if (err) {
         return console.error(err);
       }
