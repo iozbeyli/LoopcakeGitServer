@@ -48,27 +48,11 @@ exports.bake = function(req,res,next){
         return console.error(err);
       }
       console.log('Copied!');
-      fse.remove(path).then(function () {
 
-        var ref = "refs/heads/master";
-        console.log('Pushing!');
-       return repository.refreshIndex();
+      var ref = "refs/heads/master";
+      console.log('Pushing!');
 
-
-
-
-
-
-/*done(function(commitId){
-          console.log("New Commit: ", commitId);
-          remoteResult = repository.getRemote(remoteName);
-          remoteResult.connect(git.Enums.DIRECTION.PUSH);
-          remoteResult.push(["refs/heads/master:refs/heads/master"]);
-          console.log("It worked!");
-          return res.status(200).send({"success":true, "details": "It worked!"});
-
-        });*/
-      }).then(function(indexResult){
+      repository.refreshIndex().then(function(indexResult){
         console.log('index result: '+ indexResult);
         index = indexResult;
       }).then(function(){
