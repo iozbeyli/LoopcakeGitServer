@@ -13,8 +13,10 @@
     "body-parser": "^1.15.2",
     "cors": "^2.8.1",
     "express": "^4.14.0",
+    "fs-extra": "^1.0.0",
     "jsonwebtoken": "^7.1.9",
     "multer": "^1.2.0",
-    "ncp": "^2.0.0"
+    "ncp": "^2.0.0",
+    "promisify-node": "^0.4.0"
   }
 }

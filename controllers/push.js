@@ -2,7 +2,8 @@ const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
 var ncp = require("ncp").ncp;
-const fs = require('fs');
+var promisify = require("promisify-node");
+var fse = promisify(require("fs-extra"));
 
 exports.bake = function(req,res,next){
 
@@ -14,41 +15,98 @@ exports.bake = function(req,res,next){
   var repository;
   var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
-  console.log("Pulling remote.");
-  open(usrEnv)
-        .then(function (_repository) {
-            console.log('Repo Opened!');
-            repository = _repository;
-            return repository.fetch(remoteName);
-        })
-        .then(function () {
-          console.log('Fetched!');
+  var repository;
 
-          console.log("Pulling Done!");
-          var path = req.file.path;
-          console.log("Copying from: "+path);
-          console.log("To: "+usrEnv);
-          console.log(req.file.filename);
+  // Open a repository that needs to be fetched and fast-forwarded
+  git.Repository.open(usrEnv)
+    .then(function(repo) {
+      repository = repo;
 
-          ncp.limit = 16;
+      return repository.fetch(remoteName);
+  })
+  // Now that we're finished fetching, go ahead and merge our local branch
+  // with the new one
+  .then(function() {
+    return repository.mergeBranches(branch, remoteBranch);
+  })
+  .done(function() {
+    console.log("pull Done!");
 
-          ncp(path, usrEnv, function (err) {
-            if (err) {
-              return console.error(err);
-            }
-            var read_stream =  fs.createReadStream(path);
-            fs.unlink(path);
-            console.log('Copied!');
+    var path = req.file.path;
+    var filename = req.file.filename;
+    var index;
+    var oid;
+    var remote;
+    console.log("Copying from: "+path);
+    console.log("To: "+usrEnv);
+    console.log(req.file.filename);
 
-            var ref = "refs/heads/master";
-            console.log('Pushing!');
-            remoteResult = repository.getRemote(remoteName);
-            remoteResult.connect(git.Enums.DIRECTION.PUSH);
-            remoteResult.push(["refs/heads/master:refs/heads/master"]);
+    ncp.limit = 16;
+
+    ncp(path, usrEnv, function (err) {
+      if (err) {
+        return console.error(err);
+      }
+      console.log('Copied!');
+      fse.remove(path).then(function () {
+
+        var ref = "refs/heads/master";
+        console.log('Pushing!');
+        repository.refreshIndex()
+        .then(function(indexResult){
+          index = indexResult;
+        }).then(function(){
+          return index.addByPath(filename);
+        }).then(function(){
+          return index.write();
+        }).then(function(){
+          return index.writeTree();
+        }).then(function(oidResult){
+          oid = oidResult;
+          return git.Reference.nameToId(repository, "HEAD");
+        }).then(function(head){
+          return repository.getCommit(head);
+        }).then(function(parent){
+          var author = git.Signature.now("Scott Chacon",
+            "schacon@gmail.com");
+          var committer = git.Signature.now("Scott A Chacon",
+            "scott@github.com");
+          return repository.createCommit("HEAD", author, committer, "message", oid, [parent]);
+
+        }).then(function(commitId) {
+            console.log("New Commit: ", commitId);
+            return repo.getRemote("origin");
+        }).then(function(remoteResult) {
+          console.log('remote Loaded');
+          remote = remoteResult;
+          return remote.connect(nodegit.Enums.DIRECTION.PUSH);
+        }).then(function() {
+          console.log('remote Connected?', remote.connected())
+          return remote.push(
+            ["refs/heads/master:refs/heads/master"])
+          }).then(function() {
+            console.log('remote Pushed!')
             console.log("It worked!");
             return res.status(200).send({"success":true, "details": "It worked!"});
+          })
+
+
+
+
+
+/*done(function(commitId){
+          console.log("New Commit: ", commitId);
+          remoteResult = repository.getRemote(remoteName);
+          remoteResult.connect(git.Enums.DIRECTION.PUSH);
+          remoteResult.push(["refs/heads/master:refs/heads/master"]);
+          console.log("It worked!");
+          return res.status(200).send({"success":true, "details": "It worked!"});
+
+        });*/
+      });
+  });
+
           });
-        })
 
 
 
