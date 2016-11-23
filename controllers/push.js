@@ -22,7 +22,19 @@ exports.bake = function(req,res,next){
     .then(function(repo) {
       repository = repo;
       console.log("fetching");
-      return repository.fetch(remoteName);
+      return repository.fetch(remoteName, {
+
+        callbacks: {
+          credentials: function(url, username) {
+            return git.Cred.userpassPlaintextNew("git", "gelgit");
+          },
+
+          certificateCheck: function(){
+            return 1;
+          }
+        }
+
+      });
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
