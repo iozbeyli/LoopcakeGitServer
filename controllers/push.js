@@ -87,7 +87,7 @@ exports.bake = function(req,res,next){
       }).then(function(remoteResult) {
         console.log('remote Loaded');
         remote = remoteResult;
-        return remote.connect(nodegit.Enums.DIRECTION.PUSH);
+        return remote.connect(git.Enums.DIRECTION.PUSH);
       }).then(function() {
         console.log('remote Connected?', remote.connected())
         return remote.push(
