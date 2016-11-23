@@ -40,6 +40,7 @@ exports.bake = function(req,res,next){
     console.log("Copying from: "+path);
     console.log("To: "+usrEnv);
     console.log(req.file.filename);
+    console.log(usrEnv+"/"+filename);
 
     ncp.limit = 16;
 
