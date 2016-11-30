@@ -64,7 +64,7 @@ exports.getContentList = function(req,res,next){
     walker.start();
     console.log(trees.length);
 
-    for(int i=0; i<trees.length ; i++){
+    for(i=0; i<trees.length ; i++){
       tree = trees[i];
       console.log("tree: "+tree);
       walker = tree.walk();
@@ -75,15 +75,7 @@ exports.getContentList = function(req,res,next){
       });
       walker.start();
     }
-      console.log("tree: "+tree);
-      walker = tree.walk();
-      walker.on("entry", function(entry) {
-        console.log("entry: "+entry);
-        console.log(entry.path());
-        result.push(entry.path());
-      });
-      walker.start();
-    });
+
 
     //result = JSON.stringify(result);
     //result = JSON.parse(result);
