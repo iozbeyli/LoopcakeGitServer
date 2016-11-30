@@ -67,7 +67,7 @@ exports.getContentList = function(req,res,next){
       console.log("tree: "+tree);
       walker = tree.walk();
       walker.on("entry", function(entry) {
-        console.log("entry: "+entry));
+        console.log("entry: "+entry);
         console.log(entry.path());
         result.push(entry.path());
       });
