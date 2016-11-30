@@ -61,7 +61,7 @@ exports.getContentList = function(req,res,next){
     result = JSON.stringify(result);
 
     console.log("success: true, details: "+result);
-    return res.status(200).send({"success":true, "details": result});
+    return res.status(200).send({"success":true, "details": JSON.stringify(result)});
   })
   .done();
 }
