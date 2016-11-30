@@ -51,8 +51,19 @@ exports.getContentList = function(req,res,next){
   .then(function(tree) {
     // `walk()` returns an event.
     var blobsOnly = false;
-    var result = tree.entries();
+    var walker = tree.walk(blobsOnly);
+    var result = [];
+    walker.on("end", function(final) {
+      console.log(final);
+      result = finals
+    });
 
+
+    // Don't forget to call `start()`!
+    walker.start();
+
+    //result = JSON.stringify(result);
+    //result = JSON.parse(result);
 
     console.log("success: true, details: "+result);
     return res.status(200).send({"success":true, "details": result});
