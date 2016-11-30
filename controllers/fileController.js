@@ -64,19 +64,16 @@ exports.getContentList = function(req,res,next){
         console.log("path: "+entryPath);
         result.push(entryPath);
       }
+      return result;
     });
 
 
     // Don't forget to call `start()`!
     walker.start();
 
-
-
-    //result = JSON.stringify(result);
-    //result = JSON.parse(result);
-
+  })
+  .done(function(result) {
     console.log("success: true, details: "+result);
     return res.status(200).send({"success":true, "details": result});
-  })
-  .done();
+  });
 }
