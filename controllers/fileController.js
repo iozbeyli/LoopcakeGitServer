@@ -49,12 +49,19 @@ exports.getContentList = function(req,res,next){
   .then(function(tree) {
     // `walk()` returns an event.
     var walker = tree.walk();
+    var result = [];
     walker.on("entry", function(entry) {
-      console.log(entry.path().split(path.sep));
+      result.push(entry.path().split(path.sep))
     });
+
 
     // Don't forget to call `start()`!
     walker.start();
+
+    result = JSON.stringify(result);
+
+    console.log("success: true, details: "+result);
+    return res.status(200).send({"success":true, "details": result});
   })
   .done();
 }
