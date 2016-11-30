@@ -64,16 +64,14 @@ exports.getContentList = function(req,res,next){
         console.log("path: "+entryPath);
         result.push(entryPath);
       }
-      return result;
+      console.log("success: true, details: "+result);
+      return res.status(200).send({"success":true, "details": result});
     });
 
 
     // Don't forget to call `start()`!
     walker.start();
 
-  })
-  .done(function(result) {
-    console.log("success: true, details: "+result);
-    return res.status(200).send({"success":true, "details": result});
   });
+
 }
