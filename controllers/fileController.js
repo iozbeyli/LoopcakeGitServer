@@ -52,7 +52,7 @@ exports.getContentList = function(req,res,next){
     // `walk()` returns an event.
     var walker = tree.walk();
     var result = [];
-    walker.on("entry", function(entry) {
+    walker.on("end", function(entry) {
       result.push(entry.path())
     });
 
