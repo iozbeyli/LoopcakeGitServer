@@ -45,7 +45,7 @@ exports.getContentList = function(req,res,next){
     return repository.getBranchCommit(branch);;
   })
   .then(function(commitOnBranch) {
-    console.log("commit: "+commitOnBranch);
+      console.log("commit: "+commitOnBranch);
       return commitOnBranch.getTree();
   })
   .then(function(tree) {
@@ -53,7 +53,7 @@ exports.getContentList = function(req,res,next){
     var walker = tree.walk();
     var result = [];
     walker.on("entry", function(entry) {
-      result.push(entry.path().split(path.sep))
+      result.push(entry.path())
     });
 
 
