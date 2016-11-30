@@ -3,7 +3,6 @@ var path = require("path");
 var open = git.Repository.open;
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
-var dirTree = require('directory-tree');
 
 exports.getContentList = function(req,res,next){
 
@@ -68,7 +67,7 @@ exports.getContentList = function(req,res,next){
       }
 
       for (var i = 0; i < input.length; i++) {
-        var chain = input[i].split("-");
+        var chain = input[i].split("/");
         var currentNode = output;
         for (var j = 0; j < chain.length; j++) {
           var wantedNode = chain[j];
