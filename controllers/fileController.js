@@ -6,7 +6,8 @@ var fse = promisify(require("fs-extra"));
 
 exports.getContentList = function(req,res,next){
 
-  console.log("Push request recieved.");
+  console.log("getContentList request recieved.");
+  console.log(req.body);
   var user = req.body.user;
   var repo = req.body.repo;
   var remoteName = 'origin';
