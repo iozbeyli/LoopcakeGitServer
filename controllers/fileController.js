@@ -42,9 +42,10 @@ exports.getContentList = function(req,res,next){
     console.log("fetched");
     console.log("merging");
     repository.mergeBranches(branch, remoteBranch);
-    return repository.getBranchCommit(currentBranch);;
+    return repository.getBranchCommit(branch);;
   })
   .then(function(commitOnBranch) {
+    console.log("commit: "+commitOnBranch);
       return commitOnBranch.getTree();
   })
   .then(function(tree) {
