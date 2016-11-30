@@ -50,7 +50,7 @@ exports.getContentList = function(req,res,next){
     // `walk()` returns an event.
     var walker = tree.walk();
     walker.on("entry", function(entry) {
-      console.log(entry.path());
+      console.log(entry.path().split(path.sep));
     });
 
     // Don't forget to call `start()`!
