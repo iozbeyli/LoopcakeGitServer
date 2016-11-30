@@ -41,7 +41,7 @@ exports.getContentList = function(req,res,next){
     console.log("fetched");
     console.log("merging");
     repository.mergeBranches(branch, remoteBranch);
-    return repo.getMasterCommit();;
+    return repository.getMasterCommit();;
   })
   .then(function(firstCommitOnMaster) {
       return firstCommitOnMaster.getTree();
