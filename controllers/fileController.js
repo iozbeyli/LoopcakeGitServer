@@ -59,9 +59,10 @@ exports.getContentList = function(req,res,next){
     walker.start();
 
     result = JSON.stringify(result);
+    result.replace(/\"/g, "")
 
     console.log("success: true, details: "+result);
-    return res.status(200).send({"success":true, "details": JSON.stringify(result)});
+    return res.status(200).send({"success":true, "details": result});
   })
   .done();
 }
