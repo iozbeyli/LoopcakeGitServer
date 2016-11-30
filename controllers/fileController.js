@@ -3,7 +3,6 @@ var path = require("path");
 var open = git.Repository.open;
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
-var dirTree = require('directory-tree');
 
 exports.getContentList = function(req,res,next){
 
