@@ -57,24 +57,25 @@ exports.getContentList = function(req,res,next){
     walker.on("end", function(final) {
       console.log(final);
       trees = final;
+      console.log(trees.length);
+
+      for(i=0; i<trees.length ; i++){
+        tree = trees[i];
+        console.log("tree: "+tree);
+        walker = tree.walk();
+        walker.on("entry", function(entry) {
+          console.log("entry: "+entry);
+          console.log(entry.path());
+          result.push(entry.path());
+        });
+        walker.start();
+      }
     });
 
 
     // Don't forget to call `start()`!
     walker.start();
-    console.log(trees.length);
 
-    for(i=0; i<trees.length ; i++){
-      tree = trees[i];
-      console.log("tree: "+tree);
-      walker = tree.walk();
-      walker.on("entry", function(entry) {
-        console.log("entry: "+entry);
-        console.log(entry.path());
-        result.push(entry.path());
-      });
-      walker.start();
-    }
 
 
     //result = JSON.stringify(result);
