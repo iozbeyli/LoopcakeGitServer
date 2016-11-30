@@ -99,7 +99,7 @@ exports.getContentList = function(req,res,next){
   });
 }
 
-exports.getContentList = function(req,res,next){
+exports.getFileContent = function(req,res,next){
 
   console.log("getFileContent request recieved.");
   console.log(req.body);
