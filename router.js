@@ -28,5 +28,6 @@ module.exports = function(app) {
   apiRoutes.post('/create', create.create);
   apiRoutes.post('/pull', pull.serve);
   apiRoutes.post('/list', fileController.getContentList);
+  apiRoutes.post('/getFileContent', fileController.getFileContent);
   app.use('/api', apiRoutes);
 }
