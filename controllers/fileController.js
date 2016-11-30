@@ -49,5 +49,5 @@ exports.getContentList = function(req,res,next){
       // Files is an array of filename
       console.log(files);
     });
-  }
+  });
 }
