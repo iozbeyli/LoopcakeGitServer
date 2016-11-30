@@ -14,7 +14,7 @@ exports.getContentList = function(req,res,next){
   var branch = 'master';
   var repository;
   var remoteBranch = remoteName + '/' + branch;
-  var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
+  var usrEnv = path.resolve("~/repos/users/"+user+"/"+repo+"/");
   var repository;
 
   // Open a repository that needs to be fetched and fast-forwarded
