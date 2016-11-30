@@ -3,6 +3,7 @@ var path = require("path");
 var open = git.Repository.open;
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
+var dirTree = require('directory-tree');
 
 exports.getContentList = function(req,res,next){
 
@@ -65,11 +66,10 @@ exports.getContentList = function(req,res,next){
         console.log("path: "+entryPath);
         result.push(entryPath);
       }
-
       var output;
 
       for (var i = 0; i < result.length; i++) {
-        var chain = result[i].split("/");
+        var chain = result[i].split(path.sep);
         var currentNode = output;
         for (var j = 0; j < chain.length; j++) {
           var wantedNode = chain[j];
@@ -90,7 +90,7 @@ exports.getContentList = function(req,res,next){
       }
       console.log("success: true, details: "+output);
       return res.status(200).send({"success":true, "details": output});
-    });
+      });
 
 
     // Don't forget to call `start()`!
