@@ -3,7 +3,6 @@ var path = require("path");
 var open = git.Repository.open;
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
-var recursive = require('recursive-readdir');
 
 exports.getContentList = function(req,res,next){
 
@@ -41,13 +40,21 @@ exports.getContentList = function(req,res,next){
   .then(function() {
     console.log("fetched");
     console.log("merging");
-    return repository.mergeBranches(branch, remoteBranch);
+    repository.mergeBranches(branch, remoteBranch);
+    return repo.getMasterCommit();;
   })
-  .done(function() {
-    console.log("pull Done!");
-    recursive(usrEnv, function (err, files) {
-      // Files is an array of filename
-      console.log(files);
+  .then(function(firstCommitOnMaster) {
+      return firstCommitOnMaster.getTree();
+  })
+  .then(function(tree) {
+    // `walk()` returns an event.
+    var walker = tree.walk();
+    walker.on("entry", function(entry) {
+      console.log(entry.path());
     });
-  });
+
+    // Don't forget to call `start()`!
+    walker.start();
+  })
+  .done();
 }
