@@ -3,6 +3,7 @@ var path = require("path");
 var open = git.Repository.open;
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
+var dirTree = require('directory-tree');
 
 exports.getContentList = function(req,res,next){
 
@@ -61,9 +62,30 @@ exports.getContentList = function(req,res,next){
       console.log(trees.length);
 
       for(i=0; i<trees.length ; i++){
-        entryPath = trees[i].path().split(path.sep);
+        entryPath = trees[i].path();
         console.log("path: "+entryPath);
         result.push(entryPath);
+      }
+
+      for (var i = 0; i < input.length; i++) {
+        var chain = input[i].split("-");
+        var currentNode = output;
+        for (var j = 0; j < chain.length; j++) {
+          var wantedNode = chain[j];
+          var lastNode = currentNode;
+          for (var k = 0; k < currentNode.length; k++) {
+            if (currentNode[k].name == wantedNode) {
+                currentNode = currentNode[k].children;
+                break;
+            }
+          }
+          // If we couldn't find an item in this list of children
+          // that has the right name, create one:
+          if (lastNode == currentNode) {
+            var newNode = currentNode[k] = {name: wantedNode, children: []};
+            currentNode = newNode.children;
+          }
+        }
       }
       console.log("success: true, details: "+result);
       return res.status(200).send({"success":true, "details": result});
