@@ -61,14 +61,14 @@ exports.getContentList = function(req,res,next){
 
       for(i=0; i<trees.length ; i++){
         tree = trees[i];
-        console.log("tree: "+tree);
-        walker = tree.walk();
+        console.log("tree: "+tree.path());
+        /*walker = tree.walk();
         walker.on("entry", function(entry) {
           console.log("entry: "+entry);
           console.log(entry.path());
           result.push(entry.path());
         });
-        walker.start();
+        walker.start();*/
       }
     });
 
