@@ -51,19 +51,26 @@ exports.getContentList = function(req,res,next){
   .then(function(tree) {
     // `walk()` returns an event.
     var blobsOnly = false;
-    var walker = tree.walk(blobsOnly);
+    var walker = tree.walk();
     var result = [];
+    var trees;
     walker.on("end", function(final) {
       console.log(final);
-      result = finals
+      trees = final;
     });
 
 
     // Don't forget to call `start()`!
     walker.start();
 
-    result.forEach(function (entry, entryIndex) {
-      console.log(entry.path());
+    trees.forEach(function (tree) {
+      console.log("tree: "+tree);
+      walker = tree.walk();
+      walker.on("entry", function(entry) {
+        console.log("entry: "+entry));
+        console.log(entry.path());
+        result.push(entry.path());
+      });
     });
 
     //result = JSON.stringify(result);
