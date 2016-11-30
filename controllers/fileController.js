@@ -34,17 +34,18 @@ exports.getContentList = function(req,res,next){
         }
 
       });
+      return repository.getCurrentBranch();
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
-  .then(function() {
+  .then(function(currentBranch) {
     console.log("fetched");
     console.log("merging");
     repository.mergeBranches(branch, remoteBranch);
-    return repository.getMasterCommit();;
+    return repository.getBranchCommit(currentBranch);;
   })
-  .then(function(firstCommitOnMaster) {
-      return firstCommitOnMaster.getTree();
+  .then(function(commitOnBranch) {
+      return commitOnBranch.getTree();
   })
   .then(function(tree) {
     // `walk()` returns an event.
