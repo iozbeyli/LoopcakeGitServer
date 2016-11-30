@@ -66,8 +66,10 @@ exports.getContentList = function(req,res,next){
         result.push(entryPath);
       }
 
-      for (var i = 0; i < input.length; i++) {
-        var chain = input[i].split("/");
+      var output;
+
+      for (var i = 0; i < result.length; i++) {
+        var chain = result[i].split("/");
         var currentNode = output;
         for (var j = 0; j < chain.length; j++) {
           var wantedNode = chain[j];
@@ -86,8 +88,8 @@ exports.getContentList = function(req,res,next){
           }
         }
       }
-      console.log("success: true, details: "+result);
-      return res.status(200).send({"success":true, "details": result});
+      console.log("success: true, details: "+output);
+      return res.status(200).send({"success":true, "details": output});
     });
 
 
