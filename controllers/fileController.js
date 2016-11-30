@@ -62,6 +62,10 @@ exports.getContentList = function(req,res,next){
     // Don't forget to call `start()`!
     walker.start();
 
+    result.forEach(function (entry, entryIndex) {
+      console.log(entry.path());
+    });
+
     //result = JSON.stringify(result);
     //result = JSON.parse(result);
 
