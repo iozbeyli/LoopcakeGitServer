@@ -45,7 +45,7 @@ exports.getContentList = function(req,res,next){
   })
   .done(function() {
     console.log("pull Done!");
-    recursive('some/path', function (err, files) {
+    recursive(usrEnv, function (err, files) {
       // Files is an array of filename
       console.log(files);
     });
