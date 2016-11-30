@@ -65,10 +65,11 @@ exports.getContentList = function(req,res,next){
         console.log("path: "+entryPath);
         result.push(entryPath);
       }
-      var output;
+      var output = [];
 
       for (var i = 0; i < result.length; i++) {
         var chain = result[i].split(path.sep);
+        console.log("path: "+chain);
         var currentNode = output;
         for (var j = 0; j < chain.length; j++) {
           var wantedNode = chain[j];
