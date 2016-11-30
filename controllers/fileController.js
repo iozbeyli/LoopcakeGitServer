@@ -50,9 +50,10 @@ exports.getContentList = function(req,res,next){
   })
   .then(function(tree) {
     // `walk()` returns an event.
-    var walker = tree.walk();
+    var blobsOnly = false;
+    var walker = tree.walk(blobsOnly);
     var result = [];
-    walker.on("end", function(entry) {
+    walker.on("entry", function(entry) {
       result.push(entry.path())
     });
 
