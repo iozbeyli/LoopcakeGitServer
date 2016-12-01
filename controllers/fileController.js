@@ -145,7 +145,7 @@ exports.getFileContent = function(req,res,next){
       if(err){
         console.log(err) // => null
       }else{
-        if(content){
+        if(response){
           console.log("success: true, details: "+response);
           return res.status(200).send({"success":true, "details": response});
         }else {
