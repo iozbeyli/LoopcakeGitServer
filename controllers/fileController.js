@@ -140,7 +140,7 @@ exports.getFileContent = function(req,res,next){
     console.log("reading "+file);
     fse.readFile(file, "utf-8", function (err, data) {
       var response = {path: null, data: null};
-      response.path = filePath;
+      response.path = filePath.split(path.sep);;
       response.data = data;
       if(err){
         console.log(err) // => null
