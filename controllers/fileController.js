@@ -138,7 +138,7 @@ exports.getFileContent = function(req,res,next){
   // with the new one
   .then(function(file) {
     console.log("reading");
-    fs.readFile(file, function (err, data) {
+    fs.readFile(file, "utf-8", function (err, data) {
       if(err)
         console.log(err) // => null
       else
