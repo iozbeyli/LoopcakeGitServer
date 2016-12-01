@@ -139,12 +139,15 @@ exports.getFileContent = function(req,res,next){
   .then(function(file) {
     console.log("reading "+file);
     fse.readFile(file, "utf-8", function (err, data) {
-      var content = data;
+      var response = {path: null, data: null};
+      response.path = filePath;
+      response.data = data;
       if(err){
         console.log(err) // => null
       }else{
         if(content){
-          console.log(content);
+          console.log("success: true, details: "+response);
+          return res.status(200).send({"success":true, "details": response});
         }else {
           console.log("couldnt read");
         }
