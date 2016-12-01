@@ -137,12 +137,18 @@ exports.getFileContent = function(req,res,next){
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(file) {
-    console.log("reading");
+    console.log("reading "+file);
     fs.readFile(file, "utf-8", function (err, data) {
-      if(err)
+      var content = data;
+      if(err){
         console.log(err) // => null
-      else
-        console.log(data);
+      }else{
+        if(content){
+          console.log(content);
+        }else {
+          console.log("couldnt read");
+        }
+     }
       // file has now been created, including the directory it is to be placed in
 
     });
