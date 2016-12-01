@@ -22,7 +22,7 @@ exports.getContentList = function(req,res,next){
     .then(function(repo) {
       repository = repo;
       console.log("fetching");
-      return repository.fetch(remoteName, {
+      repository.fetch(remoteName, {
 
         callbacks: {
           credentials: function(url, username) {
@@ -118,7 +118,7 @@ exports.getFileContent = function(req,res,next){
     .then(function(repo) {
       repository = repo;
       console.log("fetching");
-      return repository.fetch(remoteName, {
+      repository.fetch(remoteName, {
 
         callbacks: {
           credentials: function(url, username) {
@@ -131,11 +131,13 @@ exports.getFileContent = function(req,res,next){
         }
 
       });
+      console.log("fetched");
       return "/home/git/repos/users/"+user+"/"+repo+"/"+filePath;
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(file) {
+    console.log("reading");
     fs.readFile(file, function (err, data) {
       if(err)
         console.log(err) // => null
