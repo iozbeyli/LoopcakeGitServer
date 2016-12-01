@@ -104,13 +104,13 @@ exports.getFileContent = function(req,res,next){
   console.log("getFileContent request recieved.");
   console.log(req.body);
   var user = req.body.user;
-  var repo = req.body.repo;
+  var repoRef = req.body.repo;
   var filePath = req.body.path;
   var remoteName = 'origin';
   var branch = 'master';
   var repository;
   var remoteBranch = remoteName + '/' + branch;
-  var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
+  var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repoRef+"/");
   var repository;
 
   // Open a repository that needs to be fetched and fast-forwarded
@@ -132,7 +132,7 @@ exports.getFileContent = function(req,res,next){
 
       });
       console.log("fetched");
-      return "/home/git/repos/users/"+user+"/"+repo+"/"+filePath;
+      return "/home/git/repos/users/"+user+"/"+repoRef+"/"+filePath;
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
