@@ -2,6 +2,7 @@ var archiver = require('archiver');
 const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
+const fs = require('fs');
 
 exports.serve = function(req,res,next){
   console.log("Push request recieved.");
