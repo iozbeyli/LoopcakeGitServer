@@ -14,7 +14,7 @@ exports.serve = function(req,res,next){
   var branch = 'master';
   var repository;
   var remoteBranch = remoteName + '/' + branch;
-  var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
+  var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   //var zipLoc = path.resolve(usrEnv+"/"+repoName+'.zip');
   var repository;
 
