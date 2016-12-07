@@ -62,8 +62,11 @@ exports.serve = function(req,res,next){
 
     // pipe archive data to the file
     archive.pipe(output);
-    archive.directory(usrEnv);
-    archive.finalize();
+    archive.bulk([{
+      expand: true, cwd: usrEnv,
+      src: ['**/*']
+    }]).finalize();
+
 
     console.log("success: true, details: Repository is zipped.");
     return res.status(200).send({"success":true, "details": "zipped."});
