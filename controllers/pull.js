@@ -68,7 +68,7 @@ exports.serve = function(req,res,next){
     }, {}).finalize();
 
 
-    console.log("success: true, details: Repository is sent to client.");
+    console.log("success: true, details: Repository's zip is sent to client.");
 
   });
 };
