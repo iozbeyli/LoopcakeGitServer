@@ -44,7 +44,7 @@ exports.serve = function(req,res,next){
   })
   .done(function() {
     console.log("pull Done!");
-    var output = fs.createWriteStream(usrEnv+repoName+'.zip');
+    var output = fs.createWriteStream(usrEnv+"/"+repoName+'.zip');
     var archive = archiver('zip', {
         store: true // Sets the compression method to STORE.
     });
