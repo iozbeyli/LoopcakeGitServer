@@ -55,7 +55,7 @@ exports.serve = function(req,res,next){
     });
 
     // listen for all archive data to be written
-    output.on('close', function() {
+    res.on('close', function() {
 
       console.log(archive.pointer() + ' total bytes');
       console.log('archiver has been finalized and the output file descriptor has closed.');
