@@ -54,13 +54,6 @@ exports.serve = function(req,res,next){
         store: true // Sets the compression method to STORE.
     });
 
-    // listen for all archive data to be written
-    res.on('close', function() {
-
-      console.log(archive.pointer() + ' total bytes');
-      console.log('archiver has been finalized and the output file descriptor has closed.');
-    });
-
     // good practice to catch this error explicitly
     archive.on('error', function(err) {
       throw err;
@@ -68,13 +61,16 @@ exports.serve = function(req,res,next){
 
     // pipe archive data to the file
     archive.pipe(res);
+    archive.glob('**/*', {
+      cwd: usrEnv
+    }, {})
     archive.bulk([{
       expand: true, cwd: usrEnv,
       src: ['**/*']
     }]).finalize();
 
 
-    console.log("success: true, details: Repository is zipped.");
+    console.log("success: true, details: Repository is sent to client.");
 
   });
 };
