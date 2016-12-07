@@ -49,7 +49,7 @@ exports.serve = function(req,res,next){
     console.log("Zipping");
     res.writeHead(200, {
           'Content-Type': 'application/zip',
-          'Content-disposition': 'attachment; filename='repoName'.zip'
+          'Content-disposition': 'attachment; filename='+repoName+'.zip'
     });
     var archive = archiver('zip', {
         store: true // Sets the compression method to STORE.
