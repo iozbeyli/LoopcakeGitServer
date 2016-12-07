@@ -63,11 +63,7 @@ exports.serve = function(req,res,next){
     archive.pipe(res);
     archive.glob('**/*', {
       cwd: usrEnv
-    }, {})
-    archive.bulk([{
-      expand: true, cwd: usrEnv,
-      src: ['**/*']
-    }]).finalize();
+    }, {}).finalize();
 
 
     console.log("success: true, details: Repository is sent to client.");
