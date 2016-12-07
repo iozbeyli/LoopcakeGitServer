@@ -3,6 +3,7 @@ const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
 const fs = require('fs');
+var Http = require('http');
 
 exports.serve = function(req,res,next){
   console.log("Push request recieved.");
@@ -14,6 +15,7 @@ exports.serve = function(req,res,next){
   var repository;
   var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
+  //var zipLoc = path.resolve(usrEnv+"/"+repoName+'.zip');
   var repository;
 
   // Open a repository that needs to be fetched and fast-forwarded
@@ -44,13 +46,17 @@ exports.serve = function(req,res,next){
   })
   .done(function() {
     console.log("pull Done!");
-    var output = fs.createWriteStream(usrEnv+"/"+repoName+'.zip');
+    res.writeHead(200, {
+          'Content-Type': 'application/zip',
+          'Content-disposition': 'attachment; filename=myFile.zip'
+    });
     var archive = archiver('zip', {
         store: true // Sets the compression method to STORE.
     });
 
     // listen for all archive data to be written
     output.on('close', function() {
+
       console.log(archive.pointer() + ' total bytes');
       console.log('archiver has been finalized and the output file descriptor has closed.');
     });
@@ -61,7 +67,7 @@ exports.serve = function(req,res,next){
     });
 
     // pipe archive data to the file
-    archive.pipe(output);
+    archive.pipe(res);
     archive.bulk([{
       expand: true, cwd: usrEnv,
       src: ['**/*']
