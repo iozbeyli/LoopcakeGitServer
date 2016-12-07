@@ -7,9 +7,9 @@ var Http = require('http');
 
 exports.serve = function(req,res,next){
   console.log("Download Repo request recieved.");
-  var user = req.body.user;
-  var repo = req.body.repo;
-  var repoName = req.body.repoName;
+  var user = req.query.user;
+  var repo = req.query.repo;
+  var repoName = req.query.repoName;
   var remoteName = 'origin';
   var branch = 'master';
   var repository;
