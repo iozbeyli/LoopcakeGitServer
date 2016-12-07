@@ -6,7 +6,7 @@ const fs = require('fs');
 var Http = require('http');
 
 exports.serve = function(req,res,next){
-  console.log("Push request recieved.");
+  console.log("Download Repo request recieved.");
   var user = req.body.user;
   var repo = req.body.repo;
   var repoName = req.body.repoName;
@@ -46,6 +46,7 @@ exports.serve = function(req,res,next){
   })
   .done(function() {
     console.log("pull Done!");
+    console.log("Zipping");
     res.writeHead(200, {
           'Content-Type': 'application/zip',
           'Content-disposition': 'attachment; filename=myFile.zip'
@@ -60,6 +61,7 @@ exports.serve = function(req,res,next){
     });
 
     // pipe archive data to the file
+    console.log("Sending zip file");
     archive.pipe(res);
     archive.glob('**/*', {
       cwd: usrEnv
