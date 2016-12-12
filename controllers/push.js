@@ -61,7 +61,7 @@ exports.bake = function(req,res,next){
 
     //ncp.limit = 16;
 
-    extract(path, {dir: usrEnv}, function (err) {
+    extractor(path, {dir: usrEnv}, function (err) {
       if (err) {
         return console.error("error: "+err);
       }
