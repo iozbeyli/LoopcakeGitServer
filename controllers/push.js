@@ -10,6 +10,9 @@ exports.bake = function(req,res,next){
 
   console.log("Push request recieved.");
   var user = req.body.user;
+  var username = req.body.username;
+  var usermail = req.body.usermail;
+  var commitMsg = req.body.commitMsg;
   var repo = req.body.repo;
   var remoteName = 'origin';
   var branch = 'master';
@@ -74,7 +77,7 @@ exports.bake = function(req,res,next){
         console.log('index result: '+ indexResult);
         index = indexResult;
       }).then(function(){
-        return index.addByPath(filename);
+        return index.addAll();
       }).then(function(){
         console.log('add by path');
         return index.write();
@@ -90,11 +93,9 @@ exports.bake = function(req,res,next){
         return repository.getCommit(head);
       }).then(function(parent){
         console.log('parent result: '+ parent);
-        var author = git.Signature.now("Scott Chacon",
-          "schacon@gmail.com");
-        var committer = git.Signature.now("Scott A Chacon",
-          "scott@github.com");
-        return repository.createCommit("HEAD", author, committer, "message", oid, [parent]);
+        var author = git.Signature.now(username, usermail);
+        var committer = git.Signature.now(username, usermail);
+        return repository.createCommit("HEAD", author, committer, commitMsg, oid, [parent]);
 
       }).then(function(commitId) {
           console.log("New Commit: ", commitId);
