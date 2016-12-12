@@ -1,4 +1,3 @@
-var archiver = require('archiver');
 const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;

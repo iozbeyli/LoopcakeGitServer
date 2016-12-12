@@ -1,9 +1,10 @@
 const git = require("nodegit");
 var path = require("path");
 var open = git.Repository.open;
-var ncp = require("ncp");
+//var ncp = require("ncp");
 var promisify = require("promisify-node");
 var fse = promisify(require("fs-extra"));
+var extractor = require("extract-zip");
 
 exports.bake = function(req,res,next){
 
@@ -51,7 +52,7 @@ exports.bake = function(req,res,next){
     var index;
     var oid;
     var remote;
-    console.log("Copying from: "+path);
+    console.log("Extracting from: "+path);
     console.log("To: "+usrEnv);
     console.log(req.file.filename);
     console.log(usrEnv+"/"+filename);
@@ -60,11 +61,11 @@ exports.bake = function(req,res,next){
 
     //ncp.limit = 16;
 
-    ncp(path, to, function (err) {
+    extract(path, {dir: usrEnv}, function (err) {
       if (err) {
         return console.error("error: "+err);
       }
-      console.log('Copied!');
+      console.log('Extraction completed!');
 
       var ref = "refs/heads/master";
       console.log('Pushing!');
