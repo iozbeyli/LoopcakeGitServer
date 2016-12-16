@@ -17,8 +17,8 @@ exports.create = function(req,res,next){
   var isBare = 0;
   var user = req.body.user;
   var repo = req.body.repo;
-  var usrEnv = path.resolve("../repos/users/"+user+"/"+repo+"/");
-  var remote = path.resolve("../repos/remotes/"+repo+"/");
+  var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
+  var remote = path.resolve("/home/git/repos/remotes/"+repo+"/");
 
 
   fse.ensureDir(usrEnv, function(err) {
