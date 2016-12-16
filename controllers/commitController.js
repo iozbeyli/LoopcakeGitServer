@@ -53,5 +53,6 @@ exports.getHistory = function(req,res,next){
         console.log("end");
         console.log(commits.join());
       });
+      eventEmitter.start();
   })
 }
