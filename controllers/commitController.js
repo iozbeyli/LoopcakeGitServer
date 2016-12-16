@@ -45,7 +45,13 @@ exports.getHistory = function(req,res,next){
   })
   .then(function(commitOnBranch) {
       console.log("commit: "+commitOnBranch);
-      var result = commitOnBranch.getHistory();
-      console.log(result.join());
+      var eventEmitter = commitOnBranch.getHistory();
+      eventEmitter.on('commit', function(commit) {
+        console.log(commit);
+      });
+      eventEmitter.on('end', function(commits) {
+        console.log("end");
+        console.log(commits.join());
+      });
   })
 }
