@@ -30,6 +30,6 @@ module.exports = function(app) {
   apiRoutes.get('/pull', pull.serve);
   apiRoutes.post('/list', fileController.getContentList);
   apiRoutes.post('/getFileContent', fileController.getFileContent);
-  apiRoutes.post('/getHistory', fileController.getHistory);
+  apiRoutes.post('/getHistory', commitController.getHistory);
   app.use('/api', apiRoutes);
 }
