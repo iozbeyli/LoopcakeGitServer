@@ -5,6 +5,7 @@ const push = require('./controllers/push');
 const pull = require('./controllers/pull');
 const create = require('./controllers/createRepo');
 const fileController = require('./controllers/fileController');
+const commitController = require('./controllers/commitController');
 var storage = multer.diskStorage({
   destination: function(req, file, cb){
     cb(null, __dirname+'/uploads/');
@@ -29,5 +30,6 @@ module.exports = function(app) {
   apiRoutes.get('/pull', pull.serve);
   apiRoutes.post('/list', fileController.getContentList);
   apiRoutes.post('/getFileContent', fileController.getFileContent);
+  apiRoutes.post('/getHistory', fileController.getHistory);
   app.use('/api', apiRoutes);
 }
