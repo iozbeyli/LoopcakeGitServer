@@ -48,3 +48,4 @@ exports.getHistory = function(req,res,next){
       var result = commitOnBranch.getHistory();
       console.log(result.join());
   })
+}
