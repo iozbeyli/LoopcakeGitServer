@@ -43,7 +43,7 @@ exports.getContentList = function(req,res,next){
     console.log("fetched");
     console.log("merging");
     repository.mergeBranches(branch, remoteBranch);
-    return repository.getBranchCommit(branch);;
+    return repository.getBranchCommit(branch);
   })
   .then(function(commitOnBranch) {
       console.log("commit: "+commitOnBranch);
@@ -56,20 +56,16 @@ exports.getContentList = function(req,res,next){
     var result = [];
     var trees;
     walker.on("end", function(final) {
-      console.log(final);
       trees = final;
-      console.log(trees.length);
 
       for(i=0; i<trees.length ; i++){
         entryPath = trees[i].path();
-        console.log("path: "+entryPath);
         result.push(entryPath);
       }
       var output = [];
 
       for (var i = 0; i < result.length; i++) {
         var chain = result[i].split(path.sep);
-        console.log("path: "+chain);
         var currentNode = output;
         for (var j = 0; j < chain.length; j++) {
           var wantedNode = chain[j];

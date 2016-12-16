@@ -4,7 +4,7 @@ var open = git.Repository.open;
 
 exports.getHistory = function(req,res,next){
 
-  console.log("getContentList request recieved.");
+  console.log("getHistory request recieved.");
   console.log(req.body);
   var user = req.body.user;
   var repo = req.body.repo;
@@ -41,18 +41,22 @@ exports.getHistory = function(req,res,next){
     console.log("fetched");
     console.log("merging");
     repository.mergeBranches(branch, remoteBranch);
-    return repository.getBranchCommit(branch);;
+    return repository.getReferenceNames(git.Reference.TYPE.OID);
   })
-  .then(function(commitOnBranch) {
-      console.log("commit: "+commitOnBranch);
-      var eventEmitter = commitOnBranch.getHistory();
-      eventEmitter.on('commit', function(commit) {
-        console.log(commit);
-      });
-      eventEmitter.on('end', function(commits) {
-        console.log("end");
-        console.log(commits.join());
-      });
-      eventEmitter.start();
+  .then(function(refs) {
+
+    var result = [];
+
+    refs.forEach(function(ref){
+      console.log(ref);
+      var refArray = [];
+      ref = ref.split("/");
+      ref = ref[ref.length-1];
+      console.log(ref);
+      repository.getBranchCommit(ref);
+
+
+      return res.status(200).send("ok");
+    })
   })
 }

@@ -4,6 +4,7 @@ const auth = require('./controllers/authentication');
 const push = require('./controllers/push');
 const pull = require('./controllers/pull');
 const create = require('./controllers/createRepo');
+const branchController = require('./controllers/branchController');
 const fileController = require('./controllers/fileController');
 const commitController = require('./controllers/commitController');
 var storage = multer.diskStorage({
@@ -31,5 +32,8 @@ module.exports = function(app) {
   apiRoutes.post('/list', fileController.getContentList);
   apiRoutes.post('/getFileContent', fileController.getFileContent);
   apiRoutes.post('/getHistory', commitController.getHistory);
+  apiRoutes.post('/createBranch', branchController.create);
+  apiRoutes.post('/showBranch', branchController.showBranch);
+  apiRoutes.post('/checkout', branchController.checkout);
   app.use('/api', apiRoutes);
 }
