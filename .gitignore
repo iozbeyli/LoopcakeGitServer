@@ -1,1 +1,3 @@
-node_module/
+node_modules/
+uploads
+.remote-sync.json
