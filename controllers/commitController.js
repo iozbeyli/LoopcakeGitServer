@@ -62,7 +62,8 @@ exports.getHistory = function(req,res,next){
           eventEmitter.on('commit', function(commit) {
             historyOfOne.unshift({"sha":commit.sha(),
                             "message":commit.message(),
-                            "time":commit.date()});
+                            "time":commit.date(),
+                            "branch": [ref.name()]});
             });
           eventEmitter.on('end', function(commits) {
             allHistory.push(historyOfOne);
@@ -80,6 +81,7 @@ exports.getHistory = function(req,res,next){
                   var lastNode = currentNode;
                   for (var k = 0; k < currentNode.length; k++) {
                     if (currentNode[k].log.sha == wantedNode.sha) {
+                        currentNode[k].log.branch.push(wantedNode.branch[0]);
                         currentNode = currentNode[k].children;
                         break;
                     }
