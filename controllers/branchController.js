@@ -9,9 +9,11 @@ exports.create = function(req,res,next){
   var user = req.body.user;
   var repo = req.body.repo;
   var remoteName = 'origin';
-  var branch = 'master';
+  var oldBranch = req.body.oldBranch;
+  var newBranch = req.body.newBranch;
+  var commitID = req.body.commitid;
   var repository;
-  var remoteBranch = remoteName + '/' + branch;
+  var remoteBranch = remoteName + '/' + oldBranch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   var repository;
 
@@ -40,17 +42,17 @@ exports.create = function(req,res,next){
   .then(function(currentBranch) {
     console.log("fetched");
     console.log("merging");
-    repository.mergeBranches(branch, remoteBranch);
-    return repository.getHeadCommit();
+    repository.mergeBranches(oldBranch, remoteBranch);
+    return repository.getCommit(commitID);
   })
   .then(function(commitOnBranch) {
       console.log("commit: "+commitOnBranch);
       repository.createBranch(
-        "test",
+        newBranch,
         commitOnBranch,
         0,
         repository.defaultSignature(),
-          "Created test on HEAD");
+          "Created "+newBranch+" on commit "+commitOnBranch);
 
       return res.status(200).send("ok");
   })
@@ -104,7 +106,7 @@ exports.checkout = function(req,res,next){
   var user = req.body.user;
   var repo = req.body.repo;
   var remoteName = 'origin';
-  var branch = 'test';
+  var branch = req.body.branch;
   var repository;
   var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
@@ -114,6 +116,11 @@ exports.checkout = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
+      return repository.getCurrentBranch();
+  })
+  // Now that we're finished fetching, go ahead and merge our local branch
+  // with the new one
+  .then(function(currentBranch) {
       console.log("fetching");
       repository.fetch(remoteName, {
 
@@ -128,14 +135,18 @@ exports.checkout = function(req,res,next){
         }
 
       });
-      return repository.checkoutBranch(branch)
-  })
-  // Now that we're finished fetching, go ahead and merge our local branch
-  // with the new one
-  .then(function() {
-    console.log("fetched");
+      console.log("fetched");
+      console.log(currentBranch.name());
+      branch = currentBranch.name().split("/");
+      branch = branch[branch.length-1];
+      var remoteBranch = remoteName + '/' + branch;
+      repository.mergeBranches(branch, remoteBranch);
+      return repository.checkoutBranch(branch);
 
-
-    return res.status(200).send("ok");
   })
+  .then(function(result) {
+    console.log("It worked!");
+    return res.status(200).send({"success":true, "details": "BRANCH CHECKOUT: It worked!"});
+  });
+
 }

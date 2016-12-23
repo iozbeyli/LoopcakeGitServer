@@ -55,39 +55,28 @@ exports.bake = function(req,res,next){
     var index;
     var oid;
     var remote;
-    console.log("Extracting from: "+path);
-    console.log("To: "+usrEnv);
-    console.log(req.file.filename);
-    console.log(usrEnv+"/"+filename);
-    var to = usrEnv+"/"+filename;
-    console.log(to);
 
-    //ncp.limit = 16;
+    var to = usrEnv+"/"+filename;
+
 
     extractor(path, {dir: usrEnv}, function (err) {
       if (err) {
         return console.error("error: "+err);
       }
-      console.log('Extraction completed!');
 
-      var ref = "refs/heads/master";
-      console.log('Pushing!');
+      var ref = req.body.branch;
 
       repository.refreshIndex().then(function(indexResult){
-        console.log('index result: '+ indexResult);
         index = indexResult;
       }).then(function(){
         return index.addAll();
       }).then(function(){
-        console.log('add by path');
         return index.write();
       }).then(function(){
-        console.log('write done');
         return index.writeTree();
       }).then(function(oidResult){
         oid = oidResult;
-        console.log('write tree done oid: '+ oid);
-        return git.Reference.nameToId(repository, "HEAD");
+        return git.Reference.nameToId(repository, ref);
       }).then(function(head){
         console.log('head result: '+ head);
         return repository.getCommit(head);
@@ -103,8 +92,8 @@ exports.bake = function(req,res,next){
       }).then(function(remoteResult) {
         console.log('remote Loaded '+ JSON.stringify(remoteResult));
         remote = remoteResult;
-        return remote.push(
-          ["refs/heads/master:refs/heads/master"],{
+        remote.push(
+          [ref+":"+ref],{
 
             callbacks: {
               credentials: function(url, username) {
@@ -112,16 +101,15 @@ exports.bake = function(req,res,next){
               }
             }
 
-          })
-        }).then(function() {
-          console.log('remote Pushed!')
-          console.log("It worked!");
-          return res.status(200).send({"success":true, "details": "It worked!"});
+          }).then(function(number) {
+            console.log("num");
+            console.log(number);
+            console.log('remote Pushed!')
+            console.log("It worked!");
+            return res.status(200).send({"success":true, "details": commitId});
         });
       });
-
-          });
-
-
+    });
+      });
 
 };

@@ -13,7 +13,7 @@ var index;
 
 
 exports.create = function(req,res,next){
-
+  console.log("Repo-Create request is received.");
   var isBare = 0;
   var user = req.body.user;
   var repo = req.body.repo;

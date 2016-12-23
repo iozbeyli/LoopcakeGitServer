@@ -21,7 +21,7 @@ exports.getContentList = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-      console.log("fetching");
+
       repository.fetch(remoteName, {
 
         callbacks: {
@@ -40,13 +40,11 @@ exports.getContentList = function(req,res,next){
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(currentBranch) {
-    console.log("fetched");
-    console.log("merging");
+
     repository.mergeBranches(branch, remoteBranch);
-    return repository.getBranchCommit(branch);
+    return repository.getHeadCommit();
   })
   .then(function(commitOnBranch) {
-      console.log("commit: "+commitOnBranch);
       return commitOnBranch.getTree();
   })
   .then(function(tree) {
@@ -63,7 +61,6 @@ exports.getContentList = function(req,res,next){
         result.push(entryPath);
       }
       var output = [];
-
       for (var i = 0; i < result.length; i++) {
         var chain = result[i].split(path.sep);
         var currentNode = output;
@@ -84,12 +81,28 @@ exports.getContentList = function(req,res,next){
           }
         }
       }
-      console.log("success: true, details: "+output);
-      return res.status(200).send({"success":true, "details": output});
+      var head = repository.getHeadCommit();
+      head.then(
+        function successHandler(com) {
+          var branch = repository.getCurrentBranch();
+          branch.then(
+            function successHandler(bran) {
+            console.log(bran);
+            console.log("success: true, details: ContentList");
+            return res.status(200).send({"success":true, "details": output, "head":com.sha(), "branch":bran.name()});
+            },
+            function failureHandler(error) {
+              console.log(error);
+            }
+          );
+
+        console.log("success: true, details: ContentList");
+        return res.status(200).send({"success":true, "details": output, "head":result.sha(), "branch":repository.getCurrentBranch()});
+        },
+        function failureHandler(error) {
+          console.log(error);
+        });
       });
-
-
-    // Don't forget to call `start()`!
     walker.start();
 
   });

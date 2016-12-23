@@ -9,9 +9,9 @@ exports.getHistory = function(req,res,next){
   var user = req.body.user;
   var repo = req.body.repo;
   var remoteName = 'origin';
-  var branch = 'master';
+  //var branch = 'master';
   var repository;
-  var remoteBranch = remoteName + '/' + branch;
+  //var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   var repository;
 
@@ -19,7 +19,12 @@ exports.getHistory = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-      console.log("fetching");
+      return repository.getCurrentBranch();
+  })
+  // Now that we're finished fetching, go ahead and merge our local branch
+  // with the new one
+  .then(function(currentBranch) {
+    console.log("fetching");
       repository.fetch(remoteName, {
 
         callbacks: {
@@ -33,30 +38,25 @@ exports.getHistory = function(req,res,next){
         }
 
       });
-      return repository.getCurrentBranch();
-  })
-  // Now that we're finished fetching, go ahead and merge our local branch
-  // with the new one
-  .then(function(currentBranch) {
-    console.log("fetched");
-    console.log("merging");
+      console.log(currentBranch.name());
+    branch = currentBranch.name().split("/");
+    branch = branch[branch.length-1];
+    var remoteBranch = remoteName + '/' + branch;
     repository.mergeBranches(branch, remoteBranch);
     return repository.getReferences(git.Reference.TYPE.OID);
   })
   .then(function(refs) {
 
     var allHistory = [];
+    var branches = [];
     var count = refs.length;
-    console.log("count "+count);
     refs.forEach(function(ref){
-      console.log("count "+count);
-      console.log(ref.isRemote());
       if(!ref.isRemote()){
+        branches.push(ref.name());
       var historyOfOne = [];
       var commit = repository.getBranchCommit(ref);
 
-      commit.then(function successHandler(result) {
-          console.log(result.sha());
+      commit.then(function (result) {
           var eventEmitter = result.history();
 
           eventEmitter.on('commit', function(commit) {
@@ -64,12 +64,12 @@ exports.getHistory = function(req,res,next){
                             "message":commit.message(),
                             "time":commit.date(),
                             "branch": [ref.name()]});
+
             });
           eventEmitter.on('end', function(commits) {
             allHistory.push(historyOfOne);
             count--;
-            //console.log(allHistory);
-            console.log("count inside "+count);
+
             if(count == 0){
               var output = [];
 
@@ -94,16 +94,18 @@ exports.getHistory = function(req,res,next){
                   }
                 }
               }
-              console.log("success: true, details: "+output);
-              return res.status(200).send({"success":true, "details": output});
+              console.log("success: true, details: history");
+              return res.status(200).send({"success":true, "details": output, "branches": branches});
           }
           });
           eventEmitter.on('error', function(error) {
-            // Use error
+            console.log("error");
+            console.log(error);
           });
           eventEmitter.start()
-        }, function failureHandler(error) {
-          console.log(error);
+        }).catch(e => {
+          console.log("error")
+          console.log(e)
         });
       }else{
         count--;
