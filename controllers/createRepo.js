@@ -18,6 +18,9 @@ exports.create = function(req,res,next){
   var isBare = 0;
   var user = req.body.user;
   var repo = req.body.repo;
+  var name = req.body.name;
+  var email = req.body.email;
+  var message = req.body.message;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   var remote = path.resolve("/home/git/repos/remotes/"+repo+"/");
 
@@ -47,14 +50,14 @@ exports.create = function(req,res,next){
       return index.writeTree();
     })
     .then(function(oid) {
-      var author = git.Signature.now("Scott Chacon",
-        "schacon@gmail.com");
-      var committer = git.Signature.now("Scott A Chacon",
-        "scott@github.com");
+      var author = git.Signature.now(name,
+        email);
+      var committer = git.Signature.now(name,
+        email);
 
       // Since we're creating an inital commit, it has no parents. Note that unlike
       // normal we don't get the head either, because there isn't one yet.
-      return repository.createCommit("HEAD", author, committer, "message", oid, []);
+      return repository.createCommit("HEAD", author, committer, message, oid, []);
     })
     .done(function(commitId) {
 
