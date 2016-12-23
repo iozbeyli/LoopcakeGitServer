@@ -24,7 +24,6 @@ exports.getHistory = function(req,res,next){
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(currentBranch) {
-    console.log("fetching");
       repository.fetch(remoteName, {
 
         callbacks: {
@@ -38,8 +37,7 @@ exports.getHistory = function(req,res,next){
         }
 
       });
-      console.log(currentBranch.name());
-    branch = currentBranch.name().split("/");
+    var branch = currentBranch.name().split("/");
     branch = branch[branch.length-1];
     var remoteBranch = remoteName + '/' + branch;
     repository.mergeBranches(branch, remoteBranch);

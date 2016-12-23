@@ -11,9 +11,9 @@ exports.serve = function(req,res,next){
   var repo = req.query.repo;
   var repoName = req.query.repoName;
   var remoteName = 'origin';
-  var branch = 'master';
+  //var branch = 'master';
   var repository;
-  var remoteBranch = remoteName + '/' + branch;
+  //var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   //var zipLoc = path.resolve(usrEnv+"/"+repoName+'.zip');
   var repository;
@@ -22,7 +22,11 @@ exports.serve = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-      console.log("fetching");
+      return repository.getCurrentBranch();
+  })
+  // Now that we're finished fetching, go ahead and merge our local branch
+  // with the new one
+  .then(function(currentBranch) {
       return repository.fetch(remoteName, {
 
         callbacks: {
@@ -40,13 +44,12 @@ exports.serve = function(req,res,next){
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function() {
-    console.log("fetched");
-    console.log("merging");
+    var branch = currentBranch.name().split("/");
+    branch = branch[branch.length-1];
+    var remoteBranch = remoteName + '/' + branch;
     return repository.mergeBranches(branch, remoteBranch);
   })
   .done(function() {
-    console.log("pull Done!");
-    console.log("Zipping");
     res.writeHead(200, {
           'Content-Type': 'application/zip',
           'Content-disposition': 'attachment; filename='+repoName+'.zip'
@@ -61,7 +64,6 @@ exports.serve = function(req,res,next){
     });
 
     // pipe archive data to the file
-    console.log("Sending zip file");
     archive.pipe(res);
     archive.glob('**/*', {
       cwd: usrEnv

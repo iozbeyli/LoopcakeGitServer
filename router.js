@@ -33,7 +33,6 @@ module.exports = function(app) {
   apiRoutes.post('/getFileContent', fileController.getFileContent);
   apiRoutes.post('/getHistory', commitController.getHistory);
   apiRoutes.post('/createBranch', branchController.create);
-  apiRoutes.post('/showBranch', branchController.showBranch);
   apiRoutes.post('/checkout', branchController.checkout);
   app.use('/api', apiRoutes);
 }

@@ -9,15 +9,16 @@ var extractor = require("extract-zip");
 exports.bake = function(req,res,next){
 
   console.log("Push request recieved.");
+  console.log(req.body);
   var user = req.body.user;
   var username = req.body.username;
   var usermail = req.body.usermail;
   var commitMsg = req.body.commitMsg;
   var repo = req.body.repo;
   var remoteName = 'origin';
-  var branch = 'master';
+  //var branch = 'master';
   var repository;
-  var remoteBranch = remoteName + '/' + branch;
+  //var remoteBranch = remoteName + '/' + branch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   var repository;
 
@@ -25,7 +26,11 @@ exports.bake = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-      console.log("fetching");
+      return repository.getCurrentBranch();
+  })
+  // Now that we're finished fetching, go ahead and merge our local branch
+  // with the new one
+  .then(function(currentBranch) {
       return repository.fetch(remoteName, {
 
         callbacks: {
@@ -39,16 +44,13 @@ exports.bake = function(req,res,next){
         }
 
       });
-  })
-  // Now that we're finished fetching, go ahead and merge our local branch
-  // with the new one
-  .then(function() {
-    console.log("fetched");
-    console.log("merging");
+    var branch = currentBranch.name().split("/");
+    branch = branch[branch.length-1];
+    var remoteBranch = remoteName + '/' + branch;
+    repository.mergeBranches(branch, remoteBranch);
     return repository.mergeBranches(branch, remoteBranch);
   })
   .done(function() {
-    console.log("pull Done!");
 
     var path = req.file.path;
     var filename = req.file.filename;
@@ -78,20 +80,21 @@ exports.bake = function(req,res,next){
         oid = oidResult;
         return git.Reference.nameToId(repository, ref);
       }).then(function(head){
-        console.log('head result: '+ head);
+
         return repository.getCommit(head);
       }).then(function(parent){
-        console.log('parent result: '+ parent);
+
         var author = git.Signature.now(username, usermail);
         var committer = git.Signature.now(username, usermail);
         return repository.createCommit("HEAD", author, committer, commitMsg, oid, [parent]);
 
       }).then(function(commitId) {
-          console.log("New Commit: ", commitId);
+
           return repository.getRemote("origin");
       }).then(function(remoteResult) {
-        console.log('remote Loaded '+ JSON.stringify(remoteResult));
+
         remote = remoteResult;
+
         remote.push(
           [ref+":"+ref],{
 
@@ -102,11 +105,9 @@ exports.bake = function(req,res,next){
             }
 
           }).then(function(number) {
-            console.log("num");
-            console.log(number);
-            console.log('remote Pushed!')
-            console.log("It worked!");
-            return res.status(200).send({"success":true, "details": commitId});
+
+            console.log("success:true, details: Pushed ");
+            return res.status(200).send({"success":true, "details": "Pushed"});
         });
       });
     });

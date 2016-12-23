@@ -87,7 +87,6 @@ exports.getContentList = function(req,res,next){
           var branch = repository.getCurrentBranch();
           branch.then(
             function successHandler(bran) {
-            console.log(bran);
             console.log("success: true, details: ContentList");
             return res.status(200).send({"success":true, "details": output, "head":com.sha(), "branch":bran.name()});
             },
@@ -96,8 +95,6 @@ exports.getContentList = function(req,res,next){
             }
           );
 
-        console.log("success: true, details: ContentList");
-        return res.status(200).send({"success":true, "details": output, "head":result.sha(), "branch":repository.getCurrentBranch()});
         },
         function failureHandler(error) {
           console.log(error);
@@ -126,7 +123,6 @@ exports.getFileContent = function(req,res,next){
   git.Repository.open(usrEnv)
     .then(function(repo) {
       repository = repo;
-      console.log("fetching");
       repository.fetch(remoteName, {
 
         callbacks: {
@@ -140,13 +136,11 @@ exports.getFileContent = function(req,res,next){
         }
 
       });
-      console.log("fetched");
       return "/home/git/repos/users/"+user+"/"+repoRef+"/"+filePath;
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(file) {
-    console.log("reading "+file);
     fse.readFile(file, "utf-8", function (err, data) {
       var response = {path: null, data: null};
       response.path = filePath.split(path.sep);;
