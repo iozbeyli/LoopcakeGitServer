@@ -105,7 +105,7 @@ exports.bake = function(req,res,next){
             }
 
           }).then(function(number) {
-
+            fs.unlink(path);
             console.log("success:true, details: Pushed ");
             return res.status(200).send({"success":true, "details": "Pushed"});
         });
