@@ -13,6 +13,10 @@ exports.create = function(req,res,next){
   var newBranch = req.body.newBranch;
   var commitID = req.body.commitid;
   var repository;
+  console.log(newBranch);
+  tmp= oldBranch.split("/");
+  oldBranch = tmp[tmp.length-1]
+  console.log(oldBranch);
   var remoteBranch = remoteName + '/' + oldBranch;
   var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
   var repository;
@@ -43,14 +47,21 @@ exports.create = function(req,res,next){
     return repository.getCommit(commitID);
   })
   .then(function(commitOnBranch) {
-      repository.createBranch(
+      return repository.createBranch(
         newBranch,
         commitOnBranch,
         0,
         repository.defaultSignature(),
           "Created "+newBranch+" on commit "+commitOnBranch);
-      console.log("success:true, details: Branch Created, branch: "+newBranch);
-      return res.status(200).send({"success":true, "details": "Branch Created", "branch": newBranch});
+
+  }).then(function (ref) {
+    console.log(ref);
+    return git.Branch.setUpstream(ref, remoteName+"/"+newBranch);
+  }).then(function (result) {
+    console.log(result);
+    console.log("success:true, details: Branch Created, branch: "+newBranch);
+
+    return res.status(200).send({"success":true, "details": "Branch Created", "branch": newBranch});
   })
 }
 
@@ -93,6 +104,7 @@ exports.checkout = function(req,res,next){
       branch = branch[branch.length-1];
       var remoteBranch = remoteName + '/' + branch;
       repository.mergeBranches(branch, remoteBranch);
+
 
       return repository.checkoutBranch(reqBranch);
 

@@ -21,15 +21,16 @@ exports.create = function(req,res,next){
   var name = req.body.name;
   var email = req.body.email;
   var message = req.body.message;
-  var usrEnv = path.resolve("/home/git/repos/users/"+user+"/"+repo+"/");
+  var members = req.body.members;
+  //var remoteEnv = path.resolve("/home/git/repos/remotes/"+repo+"/");
   var remote = path.resolve("/home/git/repos/remotes/"+repo+"/");
 
 
-  fse.ensureDir(usrEnv, function(err) {
+  fse.ensureDir(remote, function(err) {
     if(err)
       console.log(err)
 
-    git.Repository.init(usrEnv, 0)
+    git.Repository.init(remote, 0)
     .then(function(repo) {
       repository = repo;
       return fse.writeFile(path.join(repository.workdir(), fileName), fileContent);
@@ -61,11 +62,50 @@ exports.create = function(req,res,next){
     })
     .done(function(commitId) {
 
-        git.Clone(usrEnv, remote+".git", {bare:1})
+        git.Clone(remote, remote+".git", {bare:1})
         .then(function(repo) {
           git.Remote.create(repository, "origin", "git@localhost:"+remote+".git");
-          console.log("success: true, details: New Repo Created.");
-          return res.status(200).send({"success":true, "details": "New Repo Created."});
+        })
+        .then(function () {
+
+            if (err) return console.error(err)
+            console.log('removed creator git env!')
+            var count = members.length;
+            members.forEach(function (member) {
+              console.log("cloning for "+member);
+              console.log("repo "+repo);
+              usrEnv = path.resolve("/home/git/repos/users/"+member+"/"+repo+"/");
+                console.log("ensured "+member);
+                if(err) console.log(err);
+                git.Clone.clone ("git@localhost:"+remote+".git", usrEnv, {
+                  bare:0,
+                  fetchOpts: {
+                    callbacks: {
+                      credentials: function(url, username) {
+                        return git.Cred.userpassPlaintextNew("git", "gelgit");
+                      },
+
+                      certificateCheck: function(){
+                        return 1;
+                      }
+                    }
+                  }
+
+                })
+                .then(function(repoOB) {
+                  console.log("creating origin for "+member);
+                  git.Remote.create(repoOB, "origin", "git@localhost:"+remote+".git");
+                  count--;
+                  console.log("count "+count);
+                  if(count ==0){
+                    console.log("success: true, details: New Repo Created.");
+                    return res.status(200).send({"success":true, "details": "New Repo Created."});
+                  }
+
+                })
+
+
+          })
         });
     });
   });

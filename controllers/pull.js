@@ -27,7 +27,7 @@ exports.serve = function(req,res,next){
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
   .then(function(currentBranch) {
-      return repository.fetch(remoteName, {
+      repository.fetch(remoteName, {
 
         callbacks: {
           credentials: function(url, username) {
@@ -40,10 +40,11 @@ exports.serve = function(req,res,next){
         }
 
       });
+      return currentBranch;
   })
   // Now that we're finished fetching, go ahead and merge our local branch
   // with the new one
-  .then(function() {
+  .then(function(currentBranch) {
     var branch = currentBranch.name().split("/");
     branch = branch[branch.length-1];
     var remoteBranch = remoteName + '/' + branch;

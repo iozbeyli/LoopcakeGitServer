@@ -47,11 +47,11 @@ exports.bake = function(req,res,next){
     var branch = currentBranch.name().split("/");
     branch = branch[branch.length-1];
     var remoteBranch = remoteName + '/' + branch;
-    repository.mergeBranches(branch, remoteBranch);
+    console.log("merging");
     return repository.mergeBranches(branch, remoteBranch);
   })
-  .done(function() {
-
+  .then(function() {
+    console.log("suc");
     var path = req.file.path;
     var filename = req.file.filename;
     var index;
@@ -105,7 +105,7 @@ exports.bake = function(req,res,next){
             }
 
           }).then(function(number) {
-            fs.unlink(path);
+            //fs.unlink(path);
             console.log("success:true, details: Pushed ");
             return res.status(200).send({"success":true, "details": "Pushed"});
         });

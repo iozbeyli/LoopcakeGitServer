@@ -34,5 +34,6 @@ module.exports = function(app) {
   apiRoutes.post('/getHistory', commitController.getHistory);
   apiRoutes.post('/createBranch', branchController.create);
   apiRoutes.post('/checkout', branchController.checkout);
+
   app.use('/api', apiRoutes);
 }
